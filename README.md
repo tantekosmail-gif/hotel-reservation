@@ -268,6 +268,7 @@ tests/                  Jest setup and shared mocks
 webpack.config.js       Webpack 5 configuration (aliases, SCSS, assets, dev server)
 babel.config.js         Babel 7 presets and plugins
 jest.config.js          Jest configuration
+vercel.json             Vercel build/output settings and SPA fallback
 ```
 
 ### Domain helpers (`utils/`)
@@ -396,10 +397,34 @@ Tests:       16 skipped, 180 passed, 196 total
 
 ## Deployment
 
-`npm run build` produces a static site in `build/` (HTML, JavaScript, CSS, images, fonts and the
-`.htaccess` file).
+`npm run build` produces a static site in **`build/`** (HTML, JavaScript, CSS, images, fonts and the
+`.htaccess` file). The output directory and the single-page fallback are declared in `vercel.json`,
+so the repository can be imported into Vercel without changing anything in the dashboard:
 
-1. Upload the contents of `build/` to any static host (Apache, Nginx, Netlify, Vercel, GitHub Pages,
+```json
+{
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
+```
+
+### Vercel
+
+1. **Add New → Project** in Vercel and import the repository; Vercel installs dependencies with npm.
+2. Keep the *Framework Preset* on **Other** — `vercel.json` sets the build command (`npm run build`)
+   and the output directory (`build`, **not** `public`).
+3. Deploy. No environment variables are required: the Firebase identifiers come from
+   `firebase.config.json`.
+
+If a build still fails with `STATIC_BUILD_NO_OUT_DIR: No Output Directory named "public" found`, the
+project-level *Output Directory* was overridden in the dashboard — set it to `build` (or clear the
+override so `vercel.json` wins).
+
+### Other static hosts
+
+1. Upload the contents of `build/` to any static host (Apache, Nginx, Netlify, GitHub Pages,
    S3 + CloudFront, …).
 2. Make sure unknown paths fall back to `index.html`, otherwise a refresh on `/view-booking` returns
    404. Ready-to-use configurations are included:
