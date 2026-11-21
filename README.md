@@ -304,8 +304,8 @@ Webpack and Jest resolve the same aliases, so imports such as
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/dahayulestarijaya-sys/hotel-management.git
-cd hotel-management
+git clone https://github.com/tantekosmail-gif/hotel-reservation.git
+cd hotel-reservation
 
 # 2. Install dependencies
 npm install
